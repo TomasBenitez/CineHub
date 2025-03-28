@@ -1,0 +1,42 @@
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas de igual ancho */
+    gap: 16px; /* Espacio entre películas */
+    padding: 16px;
+  }
+  
+  .movie-card {
+    background: rgb(0, 0, 0);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .movie-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .movie-poster {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+  }
+  
+  .movie-info {
+    padding: 12px;
+  }
+  
+  .movie-title {
+    font-weight: bold;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .movie-rating {
+    color: #666;
+    font-size: 14px;
+  }
+  

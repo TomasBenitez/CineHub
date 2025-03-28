@@ -6,7 +6,8 @@ import { SearchBar } from "./Components/SearchBar";
 import { MovieDetails } from "./Components/MovieDetails";
 import { Pagination } from "./Components/Pagination";
 import { MovieList } from "./Components/MovieList";
-
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { FavoritesList } from "./Components/favoritesList";
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -14,7 +15,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const loadMovies = async () => {
@@ -22,12 +23,15 @@ const [totalPages, setTotalPages] = useState(1);
         const { movies, totalPages } = await getPopularMovies(currentPage); 
         setMovies(movies);
         setTotalPages(totalPages);
+        setLoading(false);
       } catch (error) {
-        console.error(error);
+        setError("Error al cargar películas");
+        setLoading(false);
       }
     };
     loadMovies();
   }, [currentPage]); 
+
   const handleSearch = async (query: string) => {
     setLoading(true);
     try {
@@ -43,42 +47,53 @@ const [totalPages, setTotalPages] = useState(1);
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <>
-   
-      <h1>CineHub</h1>
-      <SearchBar onSearch={handleSearch} />
-      {loading ? (
-        <LoadingSpinner />
-      ) : (
-        <div>
-     
-     
+    <Router>
+      <div className="container mx-auto px-4">
+        {/* Navbar */}
+        <nav className="bg-blue-600 p-4 text-white">
+          <Link to="/" className="mr-4">Inicio</Link>
+          <Link to="/favoritos">Favoritos</Link>
+        </nav>
 
-      
-      {selectedMovieId && (
-        <MovieDetails 
-          movieId={selectedMovieId} 
-          onClose={() => setSelectedMovieId(null)} 
-        />
-      )}
-    </div>
+        {/* Título y SearchBar (solo en la página principal) */}
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <>
+                <h1 className="text-3xl my-4">CineHub</h1>
+                <SearchBar onSearch={handleSearch} />
+                {loading ? (
+                  <LoadingSpinner />
+                ) : (
+                  <>
+                    <MovieList movies={movies} />
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={(newPage) => setCurrentPage(newPage)}
+                    />
+                  </>
+                )}
+              </>
+            } 
+          />
+          <Route 
+            path="/favoritos" 
+            element={<FavoritesList />} 
+          />
+        </Routes>
 
-  )
+        {/* MovieDetails (compartido en todas las rutas) */}
+        {selectedMovieId && (
+          <MovieDetails 
+            movieId={selectedMovieId} 
+            onClose={() => setSelectedMovieId(null)} 
+          />
+        )}
+      </div>
+    </Router>
+  );
 }
-<div className="container mx-auto px-4">
-    <MovieList movies={movies} />
-    
-    <Pagination
-      currentPage={currentPage}
-      totalPages={totalPages}
-      onPageChange={(newPage) => setCurrentPage(newPage)}
-    />
-  </div>
-</>
-  )}
 
-  export default App
-
-
-   
- 
+export default App;

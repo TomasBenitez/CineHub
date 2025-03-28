@@ -4,7 +4,7 @@ export interface Movie {
     poster_path: string;
     vote_average: number;
     release_date: string;
-    overview: string;       // Se llama "overview" en la API, no "sinopsis"
+    overview: string;       
     genres: {
       id: number;
       name: string;
